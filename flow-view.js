@@ -12,7 +12,7 @@ function edgePoints(flow,edge) {
 function graphNode(node) {
   if(node.kind==='decision') return `<div class="decision-node" style="left:${node.x}px;top:${node.y}px;width:${node.w}px;height:${node.h}px"><span>${escapeHtml(node.title)}</span></div>`;
   const element=node.href?'a':Number.isInteger(node.step)?'button':'div';
-  const attrs=node.href?`href="${node.href}"`:Number.isInteger(node.step)?`type="button" data-show-step="${node.step}" aria-haspopup="dialog" aria-label="${escapeHtml(SYSTEM_NAMES[node.system])} · ${escapeHtml(node.title)}，查看操作详情"`:'';
+  const attrs=node.href?`href="${node.href}"`:Number.isInteger(node.step)?`type="button" data-show-step="${node.step}" aria-label="${escapeHtml(SYSTEM_NAMES[node.system])} · ${escapeHtml(node.title)}，查看操作详情"`:'';
   return `<${element} ${attrs} class="graph-node sys-${node.system} ${node.pending?'is-pending':''} ${node.kind||''}" data-node-id="${node.id}" style="left:${node.x}px;top:${node.y}px;width:${node.w}px;height:${node.h}px">
     <span class="node-heading"><span class="node-system">${SYSTEM_NAMES[node.system]}</span><span class="node-index">${Number.isInteger(node.step)?String(node.step+1).padStart(2,'0'): '↗'}${node.pending?' · 待核实':node.badge?' · '+node.badge:''}</span></span>
     <strong>${escapeHtml(node.title)}</strong><span class="node-menu">${escapeHtml(node.menu)}</span><span class="node-action">${escapeHtml(node.action)}</span><span class="node-meta">${escapeHtml(node.meta)}</span>
@@ -48,17 +48,10 @@ function scalePanel(panel,mode='initial') {
 }
 function initGraphs(){document.querySelectorAll('.diagram-panel').forEach(panel=>scalePanel(panel));}
 
-function openLargeFlow() {
+function openLargeFlow(key) {
   const dialog=document.getElementById('flow-dialog');
-  dialog.innerHTML=`<div class="large-flow-head"><h2>${GUIDE[page].scenes[sceneId].title}</h2><button type="button" data-close-flow>关闭大图 ×</button></div>${graphMarkup(`${page}/${sceneId}`,'large')}`;
+  const [group,scene]=key.split('/');
+  dialog.innerHTML=`<div class="large-flow-head"><h2>${GUIDE[group].scenes[scene].title}</h2><button type="button" data-close-flow>关闭大图 ×</button></div>${graphMarkup(key,'large')}`;
   dialog.showModal();
   scalePanel(dialog.querySelector('.diagram-panel'),'fit');
-}
-function overviewMaps() {
-  const maps=[
-    {group:'sewing',title:'缝制外发',sub:'从建单配货，到外厂完工与回货',status:'已确认主要链路',nodes:[['srm','加工商配置','新增 / 商品管理','setup'],['mag','建单与配货','创建委外缝制单','run'],['srm','接单 → 加工','整单接收 / 逐件完工','run/4'],['site','回厂 → 核对','现场入口待核实','run/6',true]]},
-    {group:'printing',title:'打印外发',sub:'配置外印工厂，外厂领取批次生产',status:'已确认外厂门户',nodes:[['mes','配置工厂与款式','外发工厂 / 打印供应商','setup'],['mag','取批次、下文件','打印批次 → 下载','run'],['mag','打印开始 → 完成','开始打印 / 打印完成','run/4'],['site','后道 / 回厂','实际承接路线待核实','run/6',true]]},
-    {group:'cutting',title:'转印与切割',sub:'SRM 工序流转；独立切割外发闭环待核实',status:'已确认工序流转',nodes:[['srm','打印转印完成','整张任务扫码推进','run/2'],['srm','切割完成','整张任务 → 待缝制','run/3'],['srm','缝制 → 生产完成','接单 / 完工逐件扫码','run/4'],['srm','物流交付','中转仓或直发','run/7']]}
-  ];
-  return `<div class="overview-legend">${Object.entries(SYSTEM_NAMES).map(([key,name])=>`<span class="system-key sys-${key}"><i></i>${name}</span>`).join('')}<span class="overview-hint">点节点进入对应流程</span></div><div class="overview-maps">${maps.map((map,i)=>`<section class="overview-map"><div class="map-heading"><div><span class="map-number">0${i+1}</span><h2>${map.title}</h2><span class="map-status">${map.status}</span></div><a href="#${map.group}/run">完整泳道图 ↗</a></div><p class="map-sub">${map.sub}</p><div class="mini-flow">${map.nodes.map((node,j)=>`${j?`<span class="mini-arrow ${node[4]?'pending':''}" aria-label="流向"><svg viewBox="0 0 48 20" aria-hidden="true"><path d="M1 10 H42 M34 3 L43 10 L34 17"/></svg></span>`:''}<a class="mini-node sys-${node[0]} ${node[4]?'is-pending':''}" href="#${map.group}/${node[3]}"><span class="node-system">${SYSTEM_NAMES[node[0]]}</span><strong>${node[1]}</strong><small>${node[2]}</small></a>`).join('')}</div><div class="map-scenes">${Object.entries(GUIDE[map.group].scenes).map(([id,scene])=>`<a href="#${map.group}/${id}">${scene.title} <span>↗</span></a>`).join('')}</div></section>`).join('')}</div>`;
 }

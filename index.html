@@ -3,35 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="彩连科技外发业务与操作指南：查看缝制外发、打印外发和切割工序的现有能力、业务流程及系统操作。">
-  <title>外发业务与操作指南 · 彩连科技</title>
-  <link rel="stylesheet" href="styles.css?v=20261015-3">
+  <meta name="description" content="一批外发，从分配到回厂。逐步演示缝制外发、打印外发与 SRM 切割工序，查看每一步的系统入口、按钮、扫码对象和交接结果。">
+  <title>一批外发，从分配到回厂 · 彩连科技</title>
+  <link rel="stylesheet" href="styles.css?v=20261015-4">
+  <link rel="stylesheet" href="report.css?v=20261015-4">
 </head>
-<body>
+<body class="report-page">
   <a class="skip" href="#main">跳至正文</a>
-  <aside class="sidebar">
-    <a class="brand" href="#overview"><span class="brand-mark">CL</span><span>彩连科技<small>供应链 · 业务指南</small></span></a>
-    <div class="nav-label">外发业务</div>
-    <nav aria-label="指南导航">
-      <a href="#overview" data-page="overview"><span class="nav-icon">⌘</span>流程总览<span class="nav-arrow">↗</span></a>
-      <a href="#sewing" data-page="sewing"><span class="nav-number">01</span>缝制外发</a>
-      <a href="#printing" data-page="printing"><span class="nav-number">02</span>打印外发</a>
-      <a href="#cutting" data-page="cutting"><span class="nav-number">03</span>转印与切割</a>
-      <a href="#comparison" data-page="comparison"><span class="nav-icon">≡</span>入口速查</a>
-      <a href="#scope" data-page="scope"><span class="nav-icon">○</span>核实范围</a>
-    </nav>
-    <div class="sidebar-foot"><span class="live-dot"></span>操作指南 · 非实时数据<small>更新于 2026 年 10 月 15 日</small></div>
-  </aside>
-  <div class="workspace">
-    <header class="topbar"><span>业务知识库 <b>/</b> 外发管理</span><div><span class="date">2026.10.15</span><button class="print-btn" id="print-page" type="button">打印流程图 <span aria-hidden="true">↗</span></button></div></header>
-    <main id="main" tabindex="-1"></main>
-    <footer>彩连科技 · 供应链系统现状梳理 <a href="#scope">查看依据与核实范围 ↗</a></footer>
-  </div>
-  <dialog id="flow-dialog" aria-label="放大流程图"></dialog>
-  <dialog id="step-dialog" aria-labelledby="step-dialog-title"></dialog>
-  <script src="guide-data.js?v=20261015-3"></script>
-  <script src="flow-data.js?v=20261015-3"></script>
-  <script src="flow-view.js?v=20261015-3"></script>
-  <script src="app.js?v=20261015-3"></script>
+  <header class="report-topbar"><a class="report-brand" href="#overview"><span>CL</span>彩连科技 <small>外发流程指南</small></a><nav aria-label="报告目录"><a href="#sewing">缝制外发</a><a href="#printing">打印外发</a><a href="#cutting">转印与切割</a><a href="#comparison">入口速查</a><a href="#scope">核实范围</a></nav></header>
+  <main id="main" tabindex="-1"></main>
+  <footer class="report-footer"><span>依据代码与已有 SOP 梳理 · 2026.10.15</span><a href="#scope">查看核实范围与依据 ↗</a><a href="#overview">回到开头 ↑</a></footer>
+  <dialog id="flow-dialog" aria-label="完整系统泳道图"></dialog>
+  <script src="guide-data.js?v=20261015-4"></script>
+  <script src="flow-data.js?v=20261015-4"></script>
+  <script src="flow-view.js?v=20261015-4"></script>
+  <script src="report-data.js?v=20261015-4"></script>
+  <script src="reference-view.js?v=20261015-4"></script>
+  <script src="app.js?v=20261015-4"></script>
 </body>
 </html>
