@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="彩连科技外发业务与操作指南：查看缝制外发、打印外发和切割工序的现有能力、业务流程及系统操作。">
   <title>外发业务与操作指南 · 彩连科技</title>
-  <link rel="stylesheet" href="styles.css?v=20261015-2">
+  <link rel="stylesheet" href="styles.css?v=20261015-3">
 </head>
 <body>
   <a class="skip" href="#main">跳至正文</a>
@@ -13,7 +13,7 @@
     <a class="brand" href="#overview"><span class="brand-mark">CL</span><span>彩连科技<small>供应链 · 业务指南</small></span></a>
     <div class="nav-label">外发业务</div>
     <nav aria-label="指南导航">
-      <a href="#overview" data-page="overview"><span class="nav-icon">⌘</span>场景总览<span class="nav-arrow">↗</span></a>
+      <a href="#overview" data-page="overview"><span class="nav-icon">⌘</span>流程总览<span class="nav-arrow">↗</span></a>
       <a href="#sewing" data-page="sewing"><span class="nav-number">01</span>缝制外发</a>
       <a href="#printing" data-page="printing"><span class="nav-number">02</span>打印外发</a>
       <a href="#cutting" data-page="cutting"><span class="nav-number">03</span>转印与切割</a>
@@ -23,11 +23,15 @@
     <div class="sidebar-foot"><span class="live-dot"></span>操作指南 · 非实时数据<small>更新于 2026 年 10 月 15 日</small></div>
   </aside>
   <div class="workspace">
-    <header class="topbar"><span>业务知识库 <b>/</b> 外发管理</span><div><span class="date">2026.10.15</span><button class="print-btn" id="print-page" type="button">打印当前场景 <span aria-hidden="true">↗</span></button></div></header>
+    <header class="topbar"><span>业务知识库 <b>/</b> 外发管理</span><div><span class="date">2026.10.15</span><button class="print-btn" id="print-page" type="button">打印流程图 <span aria-hidden="true">↗</span></button></div></header>
     <main id="main" tabindex="-1"></main>
     <footer>彩连科技 · 供应链系统现状梳理 <a href="#scope">查看依据与核实范围 ↗</a></footer>
   </div>
-  <script src="guide-data.js?v=20261015-2"></script>
-  <script src="app.js?v=20261015-2"></script>
+  <dialog id="flow-dialog" aria-label="放大流程图"></dialog>
+  <dialog id="step-dialog" aria-labelledby="step-dialog-title"></dialog>
+  <script src="guide-data.js?v=20261015-3"></script>
+  <script src="flow-data.js?v=20261015-3"></script>
+  <script src="flow-view.js?v=20261015-3"></script>
+  <script src="app.js?v=20261015-3"></script>
 </body>
 </html>

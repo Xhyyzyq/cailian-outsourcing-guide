@@ -7,12 +7,8 @@ const totalScenes = Object.values(GUIDE).reduce((count, group) => count + Object
 const totalSteps = Object.values(GUIDE).flatMap(group => Object.values(group.scenes)).reduce((count, scene) => count + scene.steps.length, 0);
 
 function overview() {
-  return header('OPERATIONS GUIDE / 2026', '每一步，在哪个系统点什么', '按实际场景查看：谁操作、走哪个菜单、点哪个按钮、输入或扫描什么，以及完成后交给谁。') +
-    `<div class="hero-note"><div><strong>先认清业务链路，再照步骤操作。</strong><p>缝制外发、打印外发、SRM 工序流转分别说明；同名“完成”不代表同一件事。</p></div><div class="hero-number">${String(totalScenes).padStart(2,'0')}<span>个操作场景</span></div></div>
-    <div class="system-map" aria-label="系统分工"><div><b>MES</b><span>配置款式和外印工厂</span></div><div><b>MAG</b><span>外发任务、配货与打印批次</span></div><div><b>SRM</b><span>加工商接单、生产及回货查询</span></div><div><b>现场交接</b><span>裁片、辅料、成品的实物移交</span></div></div>
-    <div class="section-label"><h2>选择你的场景</h2><span>${totalScenes} 个场景 · ${totalSteps} 个环节</span></div>
-    <div class="scene-groups">${Object.entries(GUIDE).map(([key, group]) => `<section class="scene-group"><div class="group-title"><span>${group.number}</span><div><h2>${group.title}</h2><p>${group.summary}</p></div></div><div class="scene-cards">${Object.entries(group.scenes).map(([id, scene]) => `<a class="scene-card" href="${sceneUrl(key,id)}"><span class="scene-meta">${scene.cadence}</span><h3>${scene.title} <span aria-hidden="true">↗</span></h3><p>${scene.purpose}</p><small>${scene.steps.length} 个环节 · 查看完整流转与按钮</small></a>`).join('')}</div></section>`).join('')}</div>
-    <div class="bottom-note"><span class="symbol">i</span><p><strong>说明页不执行业务动作。</strong> 按钮名称和流程来自代码与文档核对；线上菜单权限、实际开关，以及标为“待核实”的工位仍需现场确认。<a href="#scope">查看核实范围</a></p></div>`;
+  return header('VISUAL WORKFLOW / 2026', '外发怎么走，一张图看清', '先看三条业务主线，再点进场景泳道图。节点写明系统、菜单和按钮，箭头串起前后交接。') +
+    overviewMaps() + `<div class="bottom-note"><span class="symbol">i</span><p>共 ${totalScenes} 张场景流程图 · ${totalSteps} 个操作环节。虚线标注待核实的交接，具体说明可点击节点查看。<a href="#scope">查看核实范围</a></p></div>`;
 }
 
 function stepDetail(step, index, scene) {
@@ -30,13 +26,13 @@ function stepDetail(step, index, scene) {
 
 function workflow() {
   const group = GUIDE[page], scene = group.scenes[sceneId];
-  return header(`${group.title} / 场景操作`, scene.title, scene.purpose) +
-    `<nav class="scene-nav" aria-label="${group.title}场景">${Object.entries(group.scenes).map(([id, item]) => `<a href="${sceneUrl(page,id)}" ${id === sceneId ? 'aria-current="page"' : ''}>${item.title}<small>${item.cadence}</small></a>`).join('')}</nav>
-    <div class="scene-context"><div><span class="field-label">开始前</span><p>${scene.before}</p></div><div><span class="field-label">完成到哪里</span><p>${scene.end}</p></div></div>
-    <section aria-labelledby="chain-title"><div class="section-label"><h2 id="chain-title">完整流转表</h2><span>点击环节名称查看详细操作</span></div><div class="chain-wrap"><table class="chain-table"><caption class="sr-only">${scene.title}：操作人、系统菜单、按钮、状态及交接</caption><thead><tr><th scope="col">环节 / 谁操作</th><th scope="col">哪个系统 / 菜单</th><th scope="col">点什么 / 扫什么</th><th scope="col">结果 → 下一环节</th></tr></thead><tbody>${scene.steps.map((step,index) => `<tr class="${step.pending ? 'pending-row' : ''}"><th scope="row"><button type="button" class="chain-link" data-show-step="${index}"><span>${String(index+1).padStart(2,'0')}</span>${step.title} ↗</button><small>${step.role}</small></th><td data-label="系统 / 菜单">${tag(step.system,step.pending?'amber':'')}<p>${step.path}</p></td><td data-label="按钮 / 扫码"><strong>${step.click}</strong><small>准备：${step.input}</small></td><td data-label="结果 / 交接"><p>${step.result}</p><div class="handoff"><span>接下来 →</span>${step.handoff}</div>${step.pending?tag('现场入口待核实','amber'):''}</td></tr>`).join('')}</tbody></table></div></section>
-    <section aria-labelledby="detail-title"><div class="section-label detail-heading"><h2 id="detail-title">逐步操作说明</h2><button class="outline-button" type="button" id="toggle-details" aria-expanded="false">展开全部详细步骤</button></div><div class="operation-list">${scene.steps.map((step,index)=>stepDetail(step,index,scene)).join('')}</div></section>
-    <div class="scene-end"><b>本场景的结束条件</b><p>${scene.end}</p></div>
-    <p class="source-details">核对依据：${scene.evidence} <a class="inline-link" href="#scope">核实范围与版本</a></p>`;
+  return header(`${group.title} / 场景流程图`, scene.title, scene.cadence + ' · 按箭头查看前后流转，点击节点查看系统操作。') +
+    `<nav class="scene-nav" aria-label="${group.title}场景">${Object.entries(group.scenes).map(([id, item]) => `<a href="${sceneUrl(page,id)}" ${id === sceneId ? 'aria-current="page"' : ''}>${item.title}</a>`).join('')}</nav>
+    ${graphMarkup(`${page}/${sceneId}`)}
+    <p class="flow-reading-note">${FLOWS[`${page}/${sceneId}`].note}</p>
+    <details class="flow-context"><summary>开始前需要准备什么 · 流程结束条件</summary><div class="scene-context"><div><span class="field-label">开始前</span><p>${scene.before}</p></div><div><span class="field-label">完成到哪里</span><p>${scene.end}</p></div></div></details>
+    <details class="manual-section"><summary>展开完整操作手册 <span>${scene.steps.length} 个环节的详细说明</span></summary><div class="operation-list">${scene.steps.map((step,index)=>stepDetail(step,index,scene)).join('')}</div></details>
+    <p class="source-details">按已核对的代码与 SOP 整理。线上权限及待核实工位需现场确认。 <a class="inline-link" href="#scope">核实范围与版本</a></p>`;
 }
 
 function comparison() {
@@ -83,13 +79,25 @@ function syncExpandButton() {
 }
 
 function showStep(index) {
-  const detail = document.getElementById(`operation-${index+1}`);
-  if (!detail) return;
-  detail.open = true;
+  const scene=GUIDE[page]?.scenes[sceneId], step=scene?.steps[index];
+  if(!step) return;
+  selectedStep=index;
   history.replaceState(null,'',`#${page}/${sceneId}/${index+1}`);
-  detail.scrollIntoView({block:'start',behavior:'instant'});
-  detail.querySelector('summary').focus({preventScroll:true});
-  syncExpandButton();
+  const dialog=document.getElementById('step-dialog');
+  dialog.innerHTML=`<div class="step-dialog-head"><div><p class="eyebrow">节点 ${String(index+1).padStart(2,'0')} / ${step.system}</p><h2 id="step-dialog-title">${step.title}</h2><p>${step.role}</p></div><button type="button" data-close-step aria-label="关闭操作详情">×</button></div>${stepDetail(step,index,scene).replace(/id="operation-\d+"/, '')}<div class="step-dialog-foot"><span>说明页仅展示流程，不会执行业务操作</span><button type="button" data-close-step>返回流程图</button></div>`;
+  const detail=dialog.querySelector('details');
+  detail.open=true;
+  detail.querySelector('summary').hidden=true;
+  if(!dialog.open) dialog.showModal();
+  dialog.scrollTop=0;
+}
+function resetStepUrl() {
+  selectedStep=-1;
+  if(GUIDE[page]) history.replaceState(null,'',`#${page}/${sceneId}`);
+}
+function closeStep() {
+  resetStepUrl();
+  document.getElementById('step-dialog').close();
 }
 
 function render() {
@@ -105,14 +113,17 @@ function render() {
     if (link.dataset.page === page) link.setAttribute('aria-current','page');
     else link.removeAttribute('aria-current');
   });
+  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
   main.innerHTML = group ? workflow() : page === 'comparison' ? comparison() : page === 'scope' ? scope() : overview();
   document.title = `${scene?.title || ({overview:'场景总览',comparison:'入口速查',scope:'核实范围'}[page])} · 外发业务指南`;
   document.querySelectorAll('.operation').forEach(detail => detail.addEventListener('toggle',syncExpandButton));
-  syncExpandButton();
+  initGraphs();
   if (selectedStep >= 0) showStep(selectedStep);
   else window.scrollTo(0,0);
 }
 
+document.getElementById('step-dialog').addEventListener('cancel',resetStepUrl);
+window.addEventListener('resize',()=>document.querySelectorAll('.diagram-panel').forEach(panel=>scalePanel(panel,'initial')));
 document.addEventListener('click', event => {
   if (event.target.closest('.skip')) {
     event.preventDefault();
@@ -123,17 +134,30 @@ document.addEventListener('click', event => {
   const button = event.target.closest('button');
   if (!button) return;
   if (button.id === 'print-page') {
-    document.querySelectorAll('.operation').forEach(detail => detail.open = true);
-    syncExpandButton();
     window.print();
   } else if (button.id === 'toggle-details') {
     const details = [...document.querySelectorAll('.operation')];
     const open = !details.every(detail => detail.open);
     details.forEach(detail => detail.open = open);
     syncExpandButton();
+  } else if (button.hasAttribute('data-close-step')) {
+    closeStep();
+  } else if (button.hasAttribute('data-zoom')) {
+    scalePanel(button.closest('.diagram-panel'),button.dataset.zoom);
+  } else if (button.hasAttribute('data-large-flow')) {
+    openLargeFlow();
+  } else if (button.hasAttribute('data-close-flow')) {
+    document.getElementById('flow-dialog').close();
   } else if (button.hasAttribute('data-show-step')) {
     showStep(Number(button.dataset.showStep));
   }
 });
+window.addEventListener('beforeprint',()=>document.querySelectorAll('.diagram-panel').forEach(panel=>{
+  const ratio=Math.min(.88,480/FLOWS[panel.dataset.flowKey].height);
+  panel.querySelector('.diagram-canvas').style.transform=`scale(${ratio})`;
+  panel.querySelector('.diagram-space').style.width=`${1120*ratio}px`;
+  panel.querySelector('.diagram-space').style.height=`${FLOWS[panel.dataset.flowKey].height*ratio}px`;
+}));
+window.addEventListener('afterprint',initGraphs);
 window.addEventListener('hashchange', render);
 render();
